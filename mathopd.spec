@@ -9,6 +9,7 @@ Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
 # Source0-md5:	6e0fea187134cb52509c2f98a8644d11
 Source1:	%{name}.init
 Source2:	%{name}.conf
+Source3:	http://www.mathopd.org/dist/dir_cgi.c.txt
 URL:		http://www.mathopd.org/
 BuildRequires:	rpmbuild(macros) >= 1.159
 Requires(pre):	/bin/id
@@ -42,10 +43,15 @@ rzeczy.
 %prep
 %setup -q -n %{name}-1.5p3
 
+cp -f %{SOURCE3}  dir_cgi.c
+
 %build
 CFLAGS="%{rpmcflags}"; export CFLAGS
+
+%{__cc} %{rpmcflags} %{rpmldflags} -o mathopd-dir_cgi dir_cgi.c
+
 cd src
-%{__make}
+%{__make} CC="%{__cc}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -56,6 +62,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/cgi-bin \
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/mathopd
 install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}
 install src/mathopd $RPM_BUILD_ROOT%{_sbindir}
+install mathopd-dir_cgi $RPM_BUILD_ROOT%{_sbindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -103,7 +110,7 @@ fi
 %files
 %defattr(644,root,root,755)
 %doc [A-Z]* doc/*
-%attr(755,root,root) %{_sbindir}/mathopd
+%attr(755,root,root) %{_sbindir}/mathopd*
 %attr(755,http,http) %{_datadir}
 %attr(754,root,root) /etc/rc.d/init.d/mathopd
 %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mathopd.conf
