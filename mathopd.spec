@@ -102,6 +102,6 @@ fi
 %doc [A-Z]* doc/*
 %attr(755,root,root) %{_sbindir}/mathopd
 %attr(755,http,http) %{_datadir}
-%attr(755,root,root) /etc/rc.d/init.d/mathopd
+%attr(754,root,root) /etc/rc.d/init.d/mathopd
 %config %{_sysconfdir}/mathopd.conf
 %attr(750,http,http) %dir %{_var}/log/mathopd
