@@ -16,7 +16,6 @@ Prereq:		/usr/sbin/useradd
 Prereq:		/usr/bin/getgid
 Prereq:		/bin/id
 Prereq:		sh-utils
-Prereq:		rc-scripts
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -24,7 +23,6 @@ Mathopd is a very small, yet very fast HTTP server for UN*X systems.
 Mathopd is designed specifically to handle a large number of
 connections with minimal fuss. It contains no unnecessary add-ons, but
 it does the trick for most things.
-
 
 %description -l pl
 Mathopd jest bardzo ma³ym, bardzo szybkim serwerem HTTP dla systemów
@@ -42,16 +40,13 @@ cd src
 
 %install
 rm -rf $RPM_BUILD_ROOT
-
-install -d $RPM_BUILD_ROOT/home/httpd/cgi-bin
-install -d $RPM_BUILD_ROOT/etc/rc.d/init.d
-install -d $RPM_BUILD_ROOT{%{_sbindir},%{_var}/log/mathopd}
+install -d $RPM_BUILD_ROOT/home/httpd/cgi-bin \
+	$RPM_BUILD_ROOT/etc/rc.d/init.d \
+	$RPM_BUILD_ROOT{%{_sbindir},%{_var}/log/mathopd}
 
 install %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/mathopd
-install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/
-install src/mathopd $RPM_BUILD_ROOT/%{_sbindir}
-
-gzip -9nf [A-Z]* doc/*
+install %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}
+install src/mathopd $RPM_BUILD_ROOT%{_sbindir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -100,9 +95,9 @@ fi
 
 %files
 %defattr(644,root,root,755)
-%doc doc/*.gz *.gz
+%doc [A-Z]* doc/*
 %attr(755,root,root) %{_sbindir}/mathopd
-%attr(-, http, http) /home/httpd
+%attr(-, http, http) /home/httpd/*
 %attr(0755, root, root) /etc/rc.d/init.d/mathopd
 %config %{_sysconfdir}/mathopd.conf
-%attr( 750,http,http) %dir %{_var}/log/mathopd
+%attr(750,http,http) %dir %{_var}/log/mathopd
