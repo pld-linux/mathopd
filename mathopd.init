@@ -2,7 +2,7 @@
 #
 # mathopd	Tiny/turbo http daemon
 #
-# chkconfig:	2345 99 01
+# chkconfig:	2345 95 01
 # description:	mathopd
 # processname:	mathopd
 # pidfile:	/var/run/mathopd.pid
