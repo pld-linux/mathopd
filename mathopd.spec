@@ -6,6 +6,7 @@ Release:	2
 Group:		Networking
 License:	BSD
 Source0:	http://www.mathopd.org/dist/%{name}-1.4-gamma.tar.gz
+# Source0-md5:	f16222d1fdf70cd15c0c5e73984cc757
 Source1:	%{name}.init
 Source2:	%{name}.conf
 URL:		http://www.mathopd.org/
