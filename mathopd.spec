@@ -4,10 +4,6 @@ Name:		mathopd
 Version:	1.4b15
 Release:	1
 Group:		Networking
-Group(de):	Netzwerkwesen
-Group(es):	Red
-Group(pl):	Sieciowe
-Group(pt_BR):	Rede
 License:	BSD
 Source0:	http://mathop.diva.nl/dist/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
