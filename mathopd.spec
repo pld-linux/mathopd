@@ -103,5 +103,5 @@ fi
 %attr(755,root,root) %{_sbindir}/mathopd
 %attr(755,http,http) %{_datadir}
 %attr(754,root,root) /etc/rc.d/init.d/mathopd
-%config %{_sysconfdir}/mathopd.conf
+%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mathopd.conf
 %attr(750,http,http) %dir %{_var}/log/mathopd
