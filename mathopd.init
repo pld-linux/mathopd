@@ -1,0 +1,67 @@
+#!/bin/bash
+#
+# mathopd	Tiny/turbo http daemon
+#
+# chkconfig:	2345 99 01
+# description:	mathopd
+# processname:	mathopd
+# pidfile:	/var/run/mathopd.pid
+# config:	/etc/mathopd.conf
+
+# Source function library
+. /etc/rc.d/init.d/functions
+
+# Get network config
+. /etc/sysconfig/network
+
+# Get service config
+[ -f /etc/sysconfig/mathopd ] && . /etc/sysconfig/mathopd
+
+# Check that networking is up.
+if is_no "${NETWORKING}"; then
+	# nls "ERROR: Networking is down. %s can't be run." <service>
+	msg_Network_Down mathopd
+	exit 1
+fi
+
+# See how we were called.
+case "$1" in
+  start)
+  	# Check if the service is already running?
+	if [ ! -f /var/lock/subsys/mathopd ]; then
+		msg_starting mathopd
+		touch /var/run/mathopd.pid
+		chown http.http /var/run/mathopd.pid
+		daemon /usr/sbin/mathopd -f /etc/mathopd.conf
+		RETVAL=$?
+		[ $RETVAL -eq 0 ] && touch /var/lock/subsys/mathopd
+	else
+		msg_Already_Running mathopd
+		exit 1
+	fi
+	;;
+  stop)
+  	# Stop daemons.
+	if [ -f /var/lock/subsys/mathopd ]; then
+		msg_stopping mathopd
+		killproc mathopd
+		rm -f /var/lock/subsys/mathopd /var/run/mathopd.pid /var/run/mathopd.loc* >/dev/null 2>&1
+	else
+		msg_Not_Running mathopd
+		exit 1
+	fi
+	;;
+  status)
+  	status mathopd
+	exit $?
+	;;
+  restart)
+  	$0 stop
+	$0 start
+	;;
+     *)
+	msg_Usage "Usage: $0 {start|stop|restart|status}"
+	exit 1
+	;;
+esac
+
