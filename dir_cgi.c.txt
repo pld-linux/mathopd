@@ -1,0 +1,179 @@
+/*
+ *   Copyright 2003 Michiel Boland.
+ *   All rights reserved.
+ *
+ *   Redistribution and use in source and binary forms, with or
+ *   without modification, are permitted provided that the following
+ *   conditions are met:
+ *
+ *   1. Redistributions of source code must retain the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer.
+ *
+ *   2. Redistributions in binary form must reproduce the above
+ *      copyright notice, this list of conditions and the following
+ *      disclaimer in the documentation and/or other materials
+ *      provided with the distribution.
+ *
+ *   3. The name of the author may not be used to endorse or promote
+ *      products derived from this software without specific prior
+ *      written permission.
+ *
+ *   THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY
+ *   EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ *   THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ *   PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR
+ *   BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ *   EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ *   TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ *   DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ *   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ *   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
+ *   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+ *   THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+struct cgi_dir_entry {
+	char *name;
+	off_t size;
+	mode_t mode;
+	time_t last_modified;
+};
+
+static int cde_compare(const void *a, const void *b)
+{
+	return strcmp(((struct cgi_dir_entry *) a)->name, ((struct cgi_dir_entry *) b)->name);
+}
+
+static void escape_html_print(const char *s)
+{
+	int c;
+
+	while ((c = *s++) != 0)
+		switch (c) {
+		case '<':
+			printf("&lt;");
+			break;
+		case '&':
+			printf("&amp;");
+			break;
+		case '"':
+			printf("&quot;");
+			break;
+		default:
+			putchar(c);
+		}
+}
+
+static int sort_and_print(struct cgi_dir_entry *p, size_t n)
+{
+	size_t i;
+	const char *path_info;
+
+	if (n)
+		qsort(p, n, sizeof *p, cde_compare);
+	setvbuf(stdout, 0, _IOFBF, 0);
+	printf("Cache-Control: max-age=900\n");
+	printf("Content-Type: text/html\n\n");
+	path_info = getenv("PATH_INFO");
+	printf("<html><head><title>index");
+	if (path_info)
+		printf(" of %s", path_info);
+	printf("</title></head><body><p><b>index");
+	if (path_info)
+		printf(" of %s", path_info);
+	printf("</b></p>\n");
+	printf("<p>directories:</p>\n");
+	printf("<div><a href=\"../\">[parent directory]</a></div>\n");
+	for (i = 0; i < n; i++) {
+		if (S_ISDIR(p[i].mode)) {
+			printf("<div><a href=\"");
+			escape_html_print(p[i].name);
+			printf("/\">");
+			escape_html_print(p[i].name);
+			printf("</a></div>\n");
+		}
+	}
+	printf("<p>files:</p>\n");
+	for (i = 0; i < n; i++) {
+		if (S_ISREG(p[i].mode)) {
+			printf("<div><a href=\"");
+			escape_html_print(p[i].name);
+			printf("\">");
+			escape_html_print(p[i].name);
+			printf("</a></div>\n");
+		}
+	}
+	printf("</body></html>\n");
+	return 0;
+}
+
+static int hide_name(const char *s)
+{
+	return s[0] == 0 || s[0] == '.';
+}
+
+static int do_dir(const char *dirname)
+{
+	struct cgi_dir_entry *p, *q;
+	size_t n;
+	int rv;
+	struct stat finfo;
+	DIR *d;
+	struct dirent *e;
+
+	p = 0;
+	n = 0;
+	rv = 0;
+	d = opendir(dirname);
+	if (d == 0) {
+		perror("opendir");
+		return 1;
+	}
+	while ((e = readdir(d)) != 0) {
+		if (hide_name(e->d_name))
+			continue;
+		if (lstat(e->d_name, &finfo) == -1) {
+			perror("lstat");
+			rv = 1;
+			break;
+		}
+		q = realloc(p, (n + 1) * sizeof *p);
+		if (q == 0) {
+			rv = 1;
+			break;
+		}
+		p = q;
+		p[n].name = strdup(e->d_name);
+		if (p[n].name == 0) {
+			rv = 1;
+			break;
+		}
+		p[n].size = finfo.st_size;
+		p[n].mode = finfo.st_mode;
+		p[n].last_modified = finfo.st_mtime;
+		++n;
+	}
+	closedir(d);
+	if (rv == 0)
+		rv = sort_and_print(p, n);
+	while (n) {
+		--n;
+		free(p[n].name);
+	}
+	if (p)
+		free(p);
+	return rv;
+}
+
+int main(void)
+{
+	return do_dir(".");
+}
