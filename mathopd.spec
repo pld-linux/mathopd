@@ -90,7 +90,7 @@ fi
 if [ -f /var/lock/subsys/mathopd ]; then
 	/etc/rc.d/init.d/mathopd restart 1>&2
 else
-	echo "Run \"/etc/rc.d/init.d/mathopd start\" to start %{name} daemon."
+	echo "Run \"/etc/rc.d/init.d/mathopd start\" to start %{name} HTTP daemon."
 fi
 
 %preun
