@@ -2,7 +2,7 @@ Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.4gamma
-Release:	2
+Release:	3
 Group:		Networking
 License:	BSD
 Source0:	http://www.mathopd.org/dist/%{name}-1.4-gamma.tar.gz
@@ -21,6 +21,8 @@ Requires(postun):	/usr/sbin/userdel
 Requires(postun):	/usr/sbin/groupdel
 Requires(post,preun):	/sbin/chkconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
+
+%define		_datadir	/home/services/httpd
 
 %description
 Mathopd is a very small, yet very fast HTTP server for UN*X systems.
@@ -44,7 +46,7 @@ cd src
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/home/httpd/cgi-bin \
+install -d $RPM_BUILD_ROOT%{_datadir}/cgi-bin \
 	$RPM_BUILD_ROOT/etc/rc.d/init.d \
 	$RPM_BUILD_ROOT{%{_sbindir},%{_var}/log/mathopd}
 
@@ -70,7 +72,7 @@ if [ -n "`id -u http 2>/dev/null`" ]; then
 		exit 1
 	fi
 else
-	/usr/sbin/useradd -u 51 -r -d /home/httpd -s /bin/false -c "HTTP User" -g http http 1>&2
+	/usr/sbin/useradd -u 51 -r -d %{_datadir} -s /bin/false -c "HTTP User" -g http http 1>&2
 fi
 
 %post
@@ -99,7 +101,7 @@ fi
 %defattr(644,root,root,755)
 %doc [A-Z]* doc/*
 %attr(755,root,root) %{_sbindir}/mathopd
-%attr(-, http, http) /home/httpd/*
-%attr(0755, root, root) /etc/rc.d/init.d/mathopd
+%attr(755,http,http) %{_datadir}
+%attr(755,root,root) /etc/rc.d/init.d/mathopd
 %config %{_sysconfdir}/mathopd.conf
 %attr(750,http,http) %dir %{_var}/log/mathopd
