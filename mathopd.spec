@@ -2,7 +2,7 @@ Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.4b20
-Release:	1
+Release:	2
 Group:		Networking
 License:	BSD
 Source0:	http://mathop.diva.nl/dist/%{name}-%{version}.tar.gz
@@ -11,11 +11,14 @@ Source2:	%{name}.conf
 URL:		http://www.mathopd.org/
 Provides:	httpd
 Provides:	webserver
-Prereq:		/sbin/chkconfig
-Prereq:		/usr/sbin/useradd
-Prereq:		/usr/bin/getgid
-Prereq:		/bin/id
-Prereq:		sh-utils
+Requires(pre):	sh-utils
+Requires(pre):	/usr/bin/getgid
+Requires(pre):	/bin/id
+Requires(pre):	/usr/sbin/groupadd
+Requires(pre):	/usr/sbin/useradd
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/userdel
+Requires(postun):	/usr/sbin/groupdel
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -53,20 +56,20 @@ rm -rf $RPM_BUILD_ROOT
 
 %pre
 if [ -n "`getgid http`" ]; then
-        if [ "`getgid http`" != "51" ]; then
-                echo "Warning: group http haven't gid=51. Correct this before install %{name}" 1>&2
-                exit 1
-        fi
+	if [ "`getgid http`" != "51" ]; then
+		echo "Error: group http doesn't have gid=51. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
 else
         /usr/sbin/groupadd -g 51 -r -f http
 fi
 if [ -n "`id -u http 2>/dev/null`" ]; then
-        if [ "`id -u http`" != "51" ]; then
-                echo "Warning: user http haven't uid=51. Correct this before install %{name}" 1>&2
-                exit 1
-        fi
+	if [ "`id -u http`" != "51" ]; then
+		echo "Error: user http doesn't have uid=51. Correct this before installing %{name}." 1>&2
+		exit 1
+	fi
 else
-        /usr/sbin/useradd -u 51 -r -d /home/httpd -s /bin/false -c "HTTP User" -g http http 1>&2
+	/usr/sbin/useradd -u 51 -r -d /home/httpd -s /bin/false -c "HTTP User" -g http http 1>&2
 fi
 
 %post
@@ -82,15 +85,13 @@ if [ "$1" = "0" ]; then
 	if [ -f /var/lock/subsys/mathopd ]; then
 		/etc/rc.d/init.d/mathopd stop 1>&2
 	fi
-fi
-if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del %{name}
 fi
 
 %postun
 if [ "$1" = "0" ]; then
-        /usr/sbin/userdel http
-        /usr/sbin/groupdel http
+	/usr/sbin/userdel http
+	/usr/sbin/groupdel http
 fi
 
 %files
