@@ -1,5 +1,5 @@
-Summary:	A fast, lightweight, non-forking HTTP server for UN*X systems
-Summary(pl):	Szybki, niedu¿y non-forking serwer httpd
+Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
+Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.4b15
 Release:	1
@@ -12,6 +12,7 @@ License:	BSD
 Source0:	http://mathop.diva.nl/dist/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.conf
+URL:		http://www.mathopd.org/
 Provides:	httpd
 Provides:	webserver
 Prereq:		/sbin/chkconfig
@@ -20,7 +21,6 @@ Prereq:		/usr/bin/getgid
 Prereq:		/bin/id
 Prereq:		sh-utils
 Prereq:		rc-scripts
-URL:		http://www.mathopd.org
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -31,8 +31,10 @@ it does the trick for most things.
 
 
 %description -l pl
-Mathopd jest bardzo ma³ym, bardzo szybkim serwerewm HTTP dla UN*X
-systemów.
+Mathopd jest bardzo ma³ym, bardzo szybkim serwerem HTTP dla systemów
+uniksowych. Jest zaprojektowany specjalnie do obs³ugi du¿ej liczby
+po³±czeñ. Nie ma niepotrzebnych dodatków, ale potrafi wiêkszo¶æ
+rzeczy.
 
 %prep
 %setup -q
