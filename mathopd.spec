@@ -1,12 +1,12 @@
 Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
-Version:	1.4gamma
-Release:	3
+Version:	1.5
+Release:	1
 Group:		Networking
 License:	BSD
-Source0:	http://www.mathopd.org/dist/%{name}-1.4-gamma.tar.gz
-# Source0-md5:	f16222d1fdf70cd15c0c5e73984cc757
+Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
+# Source0-md5:	6e0fea187134cb52509c2f98a8644d11
 Source1:	%{name}.init
 Source2:	%{name}.conf
 URL:		http://www.mathopd.org/
@@ -40,7 +40,7 @@ po³±czeñ. Nie ma niepotrzebnych dodatków, ale potrafi wiêkszo¶æ
 rzeczy.
 
 %prep
-%setup -q -n %{name}-1.4
+%setup -q -n %{name}-1.5p3
 
 %build
 CFLAGS="%{rpmcflags}"; export CFLAGS
