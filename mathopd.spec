@@ -11,7 +11,7 @@ Source1:	%{name}.init
 Source2:	%{name}.conf
 Source3:	http://www.mathopd.org/dist/dir_cgi.c.txt
 URL:		http://www.mathopd.org/
-BuildRequires:	rpmbuild(macros) >= 1.159
+BuildRequires:	rpmbuild(macros) >= 1.202
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
@@ -68,22 +68,8 @@ install mathopd-dir_cgi $RPM_BUILD_ROOT%{_sbindir}
 rm -rf $RPM_BUILD_ROOT
 
 %pre
-if [ -n "`getgid http`" ]; then
-	if [ "`getgid http`" != "51" ]; then
-		echo "Error: group http doesn't have gid=51. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/groupadd -g 51 -r -f http
-fi
-if [ -n "`id -u http 2>/dev/null`" ]; then
-	if [ "`id -u http`" != "51" ]; then
-		echo "Error: user http doesn't have uid=51. Correct this before installing %{name}." 1>&2
-		exit 1
-	fi
-else
-	/usr/sbin/useradd -u 51 -r -d %{_datadir} -s /bin/false -c "HTTP User" -g http http 1>&2
-fi
+%groupadd -g 51 -r -f http
+%useradd -u 51 -r -d %{_datadir} -s /bin/false -c "HTTP User" -g http http
 
 %post
 /sbin/chkconfig --add %{name}
