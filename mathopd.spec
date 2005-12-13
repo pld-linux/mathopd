@@ -12,14 +12,14 @@ Source2:	%{name}.conf
 Source3:	http://www.mathopd.org/dist/dir_cgi.c.txt
 URL:		http://www.mathopd.org/
 BuildRequires:	rpmbuild(macros) >= 1.202
+Requires(post,preun):	/sbin/chkconfig
+Requires(postun):	/usr/sbin/groupdel
+Requires(postun):	/usr/sbin/userdel
 Requires(pre):	/bin/id
 Requires(pre):	/usr/bin/getgid
 Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(pre):	sh-utils
-Requires(postun):	/usr/sbin/groupdel
-Requires(postun):	/usr/sbin/userdel
-Requires(post,preun):	/sbin/chkconfig
 Provides:	group(http)
 Provides:	httpd
 Provides:	user(http)
@@ -41,7 +41,7 @@ po³±czeñ. Nie ma niepotrzebnych dodatków, ale potrafi wiêkszo¶æ
 rzeczy.
 
 %prep
-%setup -q -n %{name}-1.5p3
+%setup -q -n %{name}-%{version}p3
 
 cp -f %{SOURCE3}  dir_cgi.c
 
@@ -99,5 +99,5 @@ fi
 %attr(755,root,root) %{_sbindir}/mathopd*
 %attr(755,http,http) %{_datadir}
 %attr(754,root,root) /etc/rc.d/init.d/mathopd
-%config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/mathopd.conf
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/mathopd.conf
 %attr(750,http,http) %dir %{_var}/log/mathopd
