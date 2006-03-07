@@ -3,8 +3,8 @@ Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.5
 Release:	1
-Group:		Networking
 License:	BSD
+Group:		Networking
 Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
 # Source0-md5:	6e0fea187134cb52509c2f98a8644d11
 Source1:	%{name}.init
@@ -21,7 +21,6 @@ Requires(pre):	/usr/sbin/groupadd
 Requires(pre):	/usr/sbin/useradd
 Requires(pre):	sh-utils
 Provides:	group(http)
-Provides:	httpd
 Provides:	user(http)
 Provides:	webserver
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
