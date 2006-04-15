@@ -2,7 +2,7 @@ Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.5
-Release:	2
+Release:	3
 License:	BSD
 Group:		Networking
 Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
@@ -11,7 +11,7 @@ Source1:	%{name}.init
 Source2:	%{name}.conf
 Source3:	http://www.mathopd.org/dist/dir_cgi.c.txt
 URL:		http://www.mathopd.org/
-BuildRequires:	rpmbuild(macros) >= 1.202
+BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
 Requires(postun):	/usr/sbin/userdel
@@ -46,7 +46,6 @@ cp -f %{SOURCE3}  dir_cgi.c
 
 %build
 CFLAGS="%{rpmcflags}"; export CFLAGS
-
 %{__cc} %{rpmcflags} %{rpmldflags} -o mathopd-dir_cgi dir_cgi.c
 
 cd src
@@ -72,17 +71,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add %{name}
-if [ -f /var/lock/subsys/mathopd ]; then
-	/etc/rc.d/init.d/mathopd restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/mathopd start\" to start %{name} HTTP daemon."
-fi
+%service mathopd restart "%{name} HTTP daemon"
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/mathopd ]; then
-		/etc/rc.d/init.d/mathopd stop 1>&2
-	fi
+	%service mathopd stop
 	/sbin/chkconfig --del %{name}
 fi
 
