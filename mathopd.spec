@@ -2,7 +2,7 @@ Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl):	Szybki, niedu¿y, nie forkuj±cy siê serwer HTTP
 Name:		mathopd
 Version:	1.5
-Release:	3
+Release:	4
 License:	BSD
 Group:		Networking
 Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
