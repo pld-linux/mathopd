@@ -1,5 +1,5 @@
 Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
-Summary(pl.UTF-8):   Szybki, nieduży, nie forkujący się serwer HTTP
+Summary(pl.UTF-8):	Szybki, nieduży, nie forkujący się serwer HTTP
 Name:		mathopd
 Version:	1.5
 Release:	4
