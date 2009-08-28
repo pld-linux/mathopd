@@ -2,7 +2,7 @@ Summary:	A fast, lightweighte, non-forking HTTP server for UN*X systems
 Summary(pl.UTF-8):	Szybki, nieduży, nie forkujący się serwer HTTP
 Name:		mathopd
 Version:	1.5
-Release:	4
+Release:	5
 License:	BSD
 Group:		Networking
 Source0:	http://www.mathopd.org/dist/%{name}-%{version}p3.tar.gz
@@ -11,6 +11,7 @@ Source1:	%{name}.init
 Source2:	%{name}.conf
 Source3:	http://www.mathopd.org/dist/dir_cgi.c.txt
 URL:		http://www.mathopd.org/
+Patch0:		%{name}-getline.patch
 BuildRequires:	rpmbuild(macros) >= 1.268
 Requires(post,preun):	/sbin/chkconfig
 Requires(postun):	/usr/sbin/groupdel
@@ -41,6 +42,7 @@ rzeczy.
 
 %prep
 %setup -q -n %{name}-%{version}p3
+%patch0 -p1
 
 cp -f %{SOURCE3}  dir_cgi.c
 

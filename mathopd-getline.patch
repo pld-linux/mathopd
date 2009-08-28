@@ -1,0 +1,29 @@
+--- mathopd-1.5p3/src/request.c.orig	2009-08-28 16:21:31.000000000 +0200
++++ mathopd-1.5p3/src/request.c	2009-08-28 16:22:54.000000000 +0200
+@@ -209,7 +209,7 @@
+ 	return buf;
+ }
+ 
+-static char *getline(struct pool *p, int fold)
++static char *_getline(struct pool *p, int fold)
+ {
+ 	char *s, *olds, *sp, *end;
+ 	int f;
+@@ -1090,7 +1090,7 @@
+ 	unsigned long cl;
+ 
+ 	do {
+-		l = getline(&r->cn->header_input, 0);
++		l = _getline(&r->cn->header_input, 0);
+ 		if (l == 0)
+ 			return -1;
+ 	} while (*l == 0);
+@@ -1119,7 +1119,7 @@
+ 	if (r->protocol_major && r->protocol_minor)
+ 		r->cn->keepalive = 1;
+ 	n = 0;
+-	while ((l = getline(&r->cn->header_input, 1)) != 0) {
++	while ((l = _getline(&r->cn->header_input, 1)) != 0) {
+ 		s = strchr(l, ':');
+ 		if (s == 0)
+ 			continue;
