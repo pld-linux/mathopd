@@ -42,7 +42,7 @@ rzeczy.
 
 %prep
 %setup -q -n %{name}-%{version}p3
-%patch0 -p1
+%patch -P0 -p1
 
 cp -f %{SOURCE3}  dir_cgi.c
 
